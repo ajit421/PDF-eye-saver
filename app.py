@@ -11,14 +11,11 @@ def hex_to_rgb(hex_color):
 
 def upload_to_cloudinary(file_bytes, file_name):
     """
-    Uploads the file to Cloudinary and returns the URL.
-    Checks for secrets safely.
+    Uploads to Cloudinary with a SAFE filename (no spaces).
     """
-    # 1. Check if secrets exist
     if "cloudinary" in st.secrets:
         secret = st.secrets["cloudinary"]
         
-        # 2. Configure Cloudinary
         cloudinary.config(
             cloud_name = secret["cloud_name"],
             api_key = secret["api_key"],
@@ -26,18 +23,19 @@ def upload_to_cloudinary(file_bytes, file_name):
         )
         
         try:
-            # 3. Upload command
-            # resource_type="auto" means it detects if it's image/video/pdf
-            response = cloudinary.uploader.upload(file_bytes, resource_type="auto", public_id=file_name)
+            # --- NEW CODE: Make filename safe ---
+            # 1. Replace spaces with underscores (_)
+            # 2. Remove the extra .pdf if it exists to avoid .pdf.pdf
+            safe_name = file_name.replace(" ", "_").replace(".pdf", "")
             
-            # 4. Get the Public URL
+            # Upload with the clean name
+            response = cloudinary.uploader.upload(file_bytes, resource_type="auto", public_id=safe_name)
             return response.get("secure_url")
             
         except Exception as e:
             st.error(f"Cloudinary Error: {e}")
             return None
     else:
-        # If running locally without secrets (or if secrets are missing)
         return None
 
 def change_pdf_background(file_bytes, color_hex, intensity=0.3, is_overlay=False):
