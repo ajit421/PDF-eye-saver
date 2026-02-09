@@ -4,6 +4,13 @@ import cloudinary
 import cloudinary.uploader
 import io  
 
+
+# --- HEALTH CHECK LOGIC (Add this at the very top) ---
+# This prevents the app from loading the full UI when UptimeRobot pings it.
+if st.query_params.get("health") == "check":
+    st.write("App is Healthy!")
+    st.stop() # Stops the rest of the script from running
+
 # --- Helper Functions ---
 
 def hex_to_rgb(hex_color):
